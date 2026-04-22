@@ -1,0 +1,18 @@
+name: SOC Lab Security Check
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Secret Scanning Check
+        run: |
+          # Detects if a password has been hardcoded in plain text
+          if grep -rnE "PASSWORD|SECRET|KEY" . --exclude-dir=.github; then
+            echo "SECURITY ALERT: Potential sensitive data found in files!"
+            exit 1
+          fi
