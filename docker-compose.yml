@@ -5,7 +5,7 @@ services:
     container_name: splunk-indexer
     environment:
       - SPLUNK_START_ARGS=--accept-license
-      - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
+      - SPLUNK_PASSWORD=${S_CRED}
       - SPLUNK_ACCEPT_LICENSE=yes
     ports:
       - "8000:8000"
