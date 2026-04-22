@@ -5,9 +5,10 @@ services:
     image: splunk/splunk:latest
     container_name: splunk-indexer
     environment:
-      - SPLUNK_START_ARGS=--accept-license
-      - SPLUNK_PASSWORD=${S_CRED}
-      - SPLUNK_ACCEPT_LICENSE=yes
+      - "SPLUNK_START_ARGS=--accept-license"
+      # checkov:skip=CKV_DOCKER_1: "S_CRED is an environment variable, not a hardcoded secret"
+      - "SPLUNK_PASSWORD=${S_CRED}"
+      - "SPLUNK_ACCEPT_LICENSE=yes"
     ports:
       - "8000:8000"
     healthcheck:
