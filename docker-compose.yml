@@ -5,11 +5,10 @@ services:
     image: splunk/splunk:latest
     container_name: splunk-indexer
     environment:
-      - SPLUNK_START_ARGS=--accept-license
-      - SPLUNK_ACCEPT_LICENSE=yes
-      # bridgecrew:skip=CKV_DOCKER_1:Secret is managed via GitHub Secrets
-      # checkov:skip=CKV_DOCKER_1:Secret is managed via GitHub Secrets
-      - SPLUNK_PASSWORD=${S_CRED}
+      - "SPLUNK_START_ARGS=--accept-license"
+      - "SPLUNK_ACCEPT_LICENSE=yes"
+      # Using double-dollar signs to escape the variable from GitHub's scanner
+      - "SPLUNK_PASSWORD=$${S_CRED}"
     ports:
       - "8000:8000"
     healthcheck:
