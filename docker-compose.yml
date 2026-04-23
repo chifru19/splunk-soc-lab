@@ -4,14 +4,16 @@ services:
   splunk-indexer:
     image: splunk/splunk:latest
     container_name: splunk-indexer
-    # This automatically loads every variable in your .env file
-    env_file:
-      - .env
     environment:
-      - "SPLUNK_START_ARGS=--accept-license"
-      - "SPLUNK_ACCEPT_LICENSE=yes"
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_PASSWORD=Nsongwa#2026!
+      # Required for recent Splunk versions to bypass the license error
+      - SPLUNK_SG_TERMS=--accept-sgt-current-at-splunk-com
     ports:
       - "8000:8000"
+      - "9997:9997"
+    volumes:
+      - ./data:/tmp/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 30s
