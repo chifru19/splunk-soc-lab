@@ -2,16 +2,26 @@ import time
 import random
 import os
 
-# Ensure the log directory exists (mapped to your Docker volume)
-LOG_FILE = "/var/log/attacks/access.log"
-os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+# Updated to a local path to avoid Permission Errors
+# This folder will be created inside your splunk-soc-lab directory
+LOG_FILE = "data/access.log"
+
+def ensure_log_dir():
+    """Creates the data directory if it doesn't exist."""
+    dir_name = os.path.dirname(LOG_FILE)
+    if dir_name and not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+        print(f"Created directory: {dir_name}")
 
 def generate_log():
     """Generates simulated attack and access logs."""
+    ensure_log_dir()
+    
     users = ["admin", "root", "frank_fru", "guest", "db_user", "web_master"]
     actions = ["FAILED_LOGIN", "SUCCESSFUL_LOGIN", "FILE_ACCESS", "SUDO_ATTEMPT", "SQL_INJECTION_TRY"]
     
     print(f"--- Attack Generator Started: Writing to {LOG_FILE} ---")
+    print("Press Ctrl+C to stop the generator.")
 
     while True:
         user = random.choice(users)
@@ -27,14 +37,17 @@ def generate_log():
             
             log_entry = f"{time.ctime()} | status={status} | user={user} | action={action} | src_ip={src_ip}\n"
             
-            with open(LOG_FILE, "a") as f:
-                f.write(log_entry)
-            
-            print(f"Log Generated: {action} for user {user}")
+            try:
+                with open(LOG_FILE, "a") as f:
+                    f.write(log_entry)
+                print(f"Log Generated: {action} for user {user}")
+            except Exception as e:
+                print(f"Error writing to log: {e}")
             
             if iterations > 1:
                 time.sleep(0.1)
 
+        # Wait between events to simulate real traffic
         time.sleep(random.randint(2, 7))
 
 if __name__ == "__main__":
