@@ -5,10 +5,10 @@ services:
     image: splunk/splunk:latest
     container_name: splunk-indexer
     environment:
+      # These three flags together satisfy the new legal requirements
       - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
       - SPLUNK_PASSWORD=Nsongwa#2026!
-      # Required for recent Splunk versions to bypass the license error
-      - SPLUNK_SG_TERMS=--accept-sgt-current-at-splunk-com
     ports:
       - "8000:8000"
       - "9997:9997"
