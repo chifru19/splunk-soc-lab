@@ -7,11 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
+        # Updated to v4 to resolve Node.js deprecation warnings
         uses: actions/checkout@v4
 
       - name: Secret Scanning Check
         run: |
-          # Scan for PASSWORD/SECRET/KEY but ignore the hardened user-seed.conf file
+          # Scan for PASSWORD/SECRET/KEY but exclude our authorized, hardened configuration
           if grep -rnE "\bPASSWORD\b|SECRET|KEY" . --exclude-dir=.github --exclude=user-seed.conf; then
             echo "SECURITY ALERT: Potential sensitive data found!"
             exit 1
