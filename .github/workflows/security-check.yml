@@ -11,7 +11,7 @@ jobs:
 
       - name: Secret Scanning Check
         run: |
-          # Detects plain PASSWORD but allows our hardened HASHED_PASSWORD by excluding the file
+          # Scan for PASSWORD/SECRET/KEY but ignore the hardened user-seed.conf file
           if grep -rnE "\bPASSWORD\b|SECRET|KEY" . --exclude-dir=.github --exclude=user-seed.conf; then
             echo "SECURITY ALERT: Potential sensitive data found!"
             exit 1
