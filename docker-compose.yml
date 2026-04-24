@@ -1,39 +1,32 @@
 version: '3.8'
 
 services:
-  # Automated Kernel Hardening: Fixes the THP warning on the host VM
-  thp-fixer:
-    image: alpine
-    privileged: true
-    pid: host
-    network_mode: none
-    container_name: thp-fixer
-    entrypoint: >
-      sh -c "echo never > /sys/kernel/mm/transparent_hugepage/enabled && 
-             echo never > /sys/kernel/mm/transparent_hugepage/defrag"
-    restart: "no"
-
-  # Primary SIEM: Splunk Enterprise
   splunk-indexer:
     image: splunk/splunk:latest
     container_name: splunk-indexer
     environment:
       - SPLUNK_START_ARGS=--accept-license
-      - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
+      - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
     ports:
-      - "8000:8000"   # Web UI
-      - "8088:8088"   # HEC (for attack_gen.py)
-      - "9997:9997"   # Forwarding
+      - "8000:8000"
+      - "8088:8088"
+      - "9997:9997"
     volumes:
+      - ./data:/tmp/data
+      - ./user-seed.conf:/opt/splunk/etc/system/local/user-seed.conf
       - splunk-var:/opt/splunk/var
       - splunk-etc:/opt/splunk/etc
-    depends_on:
-      - thp-fixer
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 30s
       timeout: 10s
-      retries: 5
+      retries: 15
+    networks:
+      - splunk-network
+
+networks:
+  splunk-network:
+    name: splunk-network
 
 volumes:
   splunk-var:
