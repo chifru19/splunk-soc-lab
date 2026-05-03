@@ -1,11 +1,10 @@
-version: '3.8'
-
 services:
   splunk-indexer:
     image: splunk/splunk:latest
     container_name: splunk-indexer
     environment:
       - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_PASSWORD=Nsongwa#2026!
       - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
     ports:
       - "8000:8000"
@@ -13,14 +12,14 @@ services:
       - "9997:9997"
     volumes:
       - ./data:/tmp/data
-      - ./user-seed.conf:/opt/splunk/etc/system/local/user-seed.conf
+      # We removed the direct user-seed.conf link to prevent Ansible write-locks
       - splunk-var:/opt/splunk/var
       - splunk-etc:/opt/splunk/etc
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 30s
       timeout: 10s
-      retries: 15
+      retries: 5
     networks:
       - splunk-network
 
